@@ -1,0 +1,6 @@
+{
+  "name": "7-Clock",
+  "description": "A feature-rich Retro 7-Segment LED Digital Clock with custom glow effects, stopwatch, timer, and alarms.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
