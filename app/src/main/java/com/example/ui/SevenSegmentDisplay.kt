@@ -38,8 +38,8 @@ fun SevenSegmentDigit(
     ) {
         val w = size.width
         val h = size.height
-        val t = w * 0.12f // Segment thickness
-        val g = w * 0.025f // Gap between segments
+        val t = w * 0.13f // Classic thick physical segments (approx 13% of width)
+        val g = w * 0.022f // Realistic gaps between segments to prevent overlap collisions
 
         // 7 segments are represented as: [A, B, C, D, E, F, G]
         val litState = getSegmentsForChar(char)
@@ -47,7 +47,7 @@ fun SevenSegmentDigit(
         // Calculate slant factor
         val slantFactor = if (isSlanted) Math.tan(Math.toRadians(slantAngle.toDouble())).toFloat() else 0f
 
-        // Helper to draw a single segment as a closed path polygon
+        // Helper to draw a single segment as a closed path polygon with soft glowing effects
         fun drawSegment(points: List<Offset>, isLit: Boolean) {
             val path = Path().apply {
                 val pStart = points[0].slant(h, slantFactor)
@@ -61,7 +61,7 @@ fun SevenSegmentDigit(
 
             val color = if (isLit) activeColor else activeColor.copy(alpha = inactiveOpacity)
 
-            // Draw main filled segment
+            // Draw main filled segment (no glowing layers)
             drawPath(
                 path = path,
                 color = color,
@@ -152,18 +152,17 @@ fun SevenSegmentColon(
     Canvas(
         modifier = modifier
             .fillMaxHeight()
-            .width(16.dp)
+            .width(12.dp)
     ) {
         val w = size.width
         val h = size.height
-        val dotRadius = w * 0.25f
+        val dotRadius = w * 0.22f
         val color = if (isVisible) activeColor else activeColor.copy(alpha = inactiveOpacity)
 
         val slantFactor = if (isSlanted) Math.tan(Math.toRadians(slantAngle.toDouble())).toFloat() else 0f
 
         val topDotCenter = Offset(w / 2f, h * 0.35f).slant(h, slantFactor)
         val bottomDotCenter = Offset(w / 2f, h * 0.65f).slant(h, slantFactor)
-
 
         drawCircle(color = color, radius = dotRadius, center = topDotCenter)
         drawCircle(color = color, radius = dotRadius, center = bottomDotCenter)

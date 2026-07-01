@@ -6,12 +6,12 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "clock_settings")
 data class ClockSettings(
     @PrimaryKey val id: Int = 1,
-    val ledColorHex: String = "#00F0FF", // Cyberpunk Cyan default
+    val ledColorHex: String = "#FFFFFF", // Elegant pure white default
     val use24HourFormat: Boolean = false,
-    val showSeconds: Boolean = true,
-    val isSlanted: Boolean = true,
-    val slantAngle: Float = 8f,
-    val inactiveOpacity: Float = 0.05f,
+    val showSeconds: Boolean = false, // Seconds removed by default
+    val isSlanted: Boolean = false, // Straight vertical by default
+    val slantAngle: Float = 0f, // No tilt
+    val inactiveOpacity: Float = 0.0f, // Invisible unlit segments (only lit segments visible)
     val colonBlinkStyle: String = "BLINK_SLOW", // BLINK_SLOW, BLINK_FAST, SOLID, OFF
     val tickSoundEnabled: Boolean = false,
     val alarmVibrate: Boolean = true,

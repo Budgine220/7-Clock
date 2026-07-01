@@ -52,76 +52,37 @@ fun ClockDashboard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            val digitHeight = if (isLandscape) 180.dp else 115.dp
-
-            // Center Stage Area: Immersive Gigantic Clock Segments
-            Row(
+            // Adaptive, squish-free layout using BoxWithConstraints
+            BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(horizontal = 8.dp),
+                contentAlignment = Alignment.Center
             ) {
-                // HOURS
-                SevenSegmentDigit(
-                    char = timeState.hours.getOrNull(0) ?: ' ',
-                    activeColor = ledColor,
-                    inactiveOpacity = settings.inactiveOpacity,
-                    isSlanted = settings.isSlanted,
-                    slantAngle = settings.slantAngle,
-                    modifier = Modifier.height(digitHeight)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                SevenSegmentDigit(
-                    char = timeState.hours.getOrNull(1) ?: ' ',
-                    activeColor = ledColor,
-                    inactiveOpacity = settings.inactiveOpacity,
-                    isSlanted = settings.isSlanted,
-                    slantAngle = settings.slantAngle,
-                    modifier = Modifier.height(digitHeight)
-                )
+                val availableWidth = maxWidth
+                val availableWidthPx = availableWidth.value
+                val numDigits = 4
+                val numColons = 1
+                val colonWidthPx = 12f
+                val spacerWidthPx = 4f
+                val numSpacers = 2
+                
+                val nonDigitSpacePx = (numColons * colonWidthPx) + (numSpacers * spacerWidthPx)
+                val availableDigitSpacePx = (availableWidthPx - nonDigitSpacePx).coerceAtLeast(0f)
+                val digitWidthPx = (availableDigitSpacePx / numDigits).coerceAtLeast(10f)
+                
+                // Height is aspect ratio 1:1.8
+                val calculatedHeightDp = (digitWidthPx * 1.8f).dp
+                val digitHeight = calculatedHeightDp.coerceAtMost(if (isLandscape) 180.dp else 135.dp)
 
-                // COLON
-                SevenSegmentColon(
-                    isVisible = timeState.colonsVisible,
-                    activeColor = ledColor,
-                    inactiveOpacity = settings.inactiveOpacity,
-                    isSlanted = settings.isSlanted,
-                    slantAngle = settings.slantAngle,
-                    modifier = Modifier.height(digitHeight)
-                )
-
-                // MINUTES
-                SevenSegmentDigit(
-                    char = timeState.minutes.getOrNull(0) ?: ' ',
-                    activeColor = ledColor,
-                    inactiveOpacity = settings.inactiveOpacity,
-                    isSlanted = settings.isSlanted,
-                    slantAngle = settings.slantAngle,
-                    modifier = Modifier.height(digitHeight)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                SevenSegmentDigit(
-                    char = timeState.minutes.getOrNull(1) ?: ' ',
-                    activeColor = ledColor,
-                    inactiveOpacity = settings.inactiveOpacity,
-                    isSlanted = settings.isSlanted,
-                    slantAngle = settings.slantAngle,
-                    modifier = Modifier.height(digitHeight)
-                )
-
-                // SECONDS (Only if active)
-                if (settings.showSeconds) {
-                    SevenSegmentColon(
-                        isVisible = timeState.colonsVisible,
-                        activeColor = ledColor,
-                        inactiveOpacity = settings.inactiveOpacity,
-                        isSlanted = settings.isSlanted,
-                        slantAngle = settings.slantAngle,
-                        modifier = Modifier.height(digitHeight)
-                    )
+                Row(
+                    modifier = Modifier.wrapContentSize(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // HOURS
                     SevenSegmentDigit(
-                        char = timeState.seconds.getOrNull(0) ?: ' ',
+                        char = timeState.hours.getOrNull(0) ?: ' ',
                         activeColor = ledColor,
                         inactiveOpacity = settings.inactiveOpacity,
                         isSlanted = settings.isSlanted,
@@ -130,7 +91,36 @@ fun ClockDashboard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     SevenSegmentDigit(
-                        char = timeState.seconds.getOrNull(1) ?: ' ',
+                        char = timeState.hours.getOrNull(1) ?: ' ',
+                        activeColor = ledColor,
+                        inactiveOpacity = settings.inactiveOpacity,
+                        isSlanted = settings.isSlanted,
+                        slantAngle = settings.slantAngle,
+                        modifier = Modifier.height(digitHeight)
+                    )
+
+                    // COLON
+                    SevenSegmentColon(
+                        isVisible = timeState.colonsVisible,
+                        activeColor = ledColor,
+                        inactiveOpacity = settings.inactiveOpacity,
+                        isSlanted = settings.isSlanted,
+                        slantAngle = settings.slantAngle,
+                        modifier = Modifier.height(digitHeight)
+                    )
+
+                    // MINUTES
+                    SevenSegmentDigit(
+                        char = timeState.minutes.getOrNull(0) ?: ' ',
+                        activeColor = ledColor,
+                        inactiveOpacity = settings.inactiveOpacity,
+                        isSlanted = settings.isSlanted,
+                        slantAngle = settings.slantAngle,
+                        modifier = Modifier.height(digitHeight)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    SevenSegmentDigit(
+                        char = timeState.minutes.getOrNull(1) ?: ' ',
                         activeColor = ledColor,
                         inactiveOpacity = settings.inactiveOpacity,
                         isSlanted = settings.isSlanted,
@@ -141,7 +131,7 @@ fun ClockDashboard(
             }
 
             if (!settings.use24HourFormat && timeState.amPm.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(24.dp))
                 Text(
                     text = timeState.amPm,
                     style = MaterialTheme.typography.titleMedium.copy(
@@ -169,7 +159,7 @@ fun ClockDashboard(
                 shape = RoundedCornerShape(8.dp),
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                 modifier = Modifier
-                    .height(36.dp)
+                    .height(48.dp)
                     .testTag("24h_format_switch")
             ) {
                 Text(
